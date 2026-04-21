@@ -15,7 +15,7 @@ export default function Dashboard() {
     async function load() {
       const { data: { user } } = await supabase.auth.getUser()
       const { data } = await supabase.from('visites')
-        .select('*, maisons(titre, ville, adresse, prix_mois)')
+        .select('*, maisons(titre, ville, adresse, prix)')
         .eq('locataire_id', user.id)
         .order('created_at', { ascending: false })
       setVisites(data || [])
@@ -44,7 +44,7 @@ export default function Dashboard() {
             </div>
             <div style={styles.meta}>
               <span>Date : {new Date(v.date_visite).toLocaleString('fr-DZ')}</span>
-              <span>{v.maisons?.prix_mois?.toLocaleString()} DA/mois</span>
+              <span>{v.maisons?.prix?.toLocaleString()} DA/mois</span>
             </div>
             {v.message && <p style={styles.msg}>"{v.message}"</p>}
             {v.scan_cin_url && (

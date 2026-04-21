@@ -27,9 +27,9 @@ export default function Maison() {
     if (file) {
       const fileName = `${user.id}/${Date.now()}_${file.name}`
       const { error: uploadError } = await supabase.storage
-        .from('scan-cin').upload(fileName, file)
+        .from('cin-files').upload(fileName, file)
       if (uploadError) { setError("Erreur upload: " + uploadError.message); setLoading(false); return }
-      const { data: urlData } = supabase.storage.from('scan-cin').getPublicUrl(fileName)
+      const { data: urlData } = supabase.storage.from('cin-files').getPublicUrl(fileName)
       scan_cin_url = urlData.publicUrl
     }
 
@@ -52,13 +52,14 @@ export default function Maison() {
   return (
     <div style={styles.page}>
       <div style={styles.card}>
+        {maison.image_url && (
+          <img src={maison.image_url} alt={maison.titre} style={styles.image} />
+        )}
         <h2 style={styles.title}>{maison.titre}</h2>
         <p style={styles.ville}>{maison.ville} — {maison.adresse}</p>
         <p style={styles.desc}>{maison.description}</p>
         <div style={styles.infos}>
-          <span>{maison.nb_chambres} chambres</span>
-          {maison.superficie_m2 && <span>{maison.superficie_m2} m²</span>}
-          <span style={styles.prix}>{maison.prix_mois?.toLocaleString()} DA/mois</span>
+          <span style={styles.prix}>{maison.prix?.toLocaleString()} DA/mois</span>
         </div>
         <hr style={{margin:'1.5rem 0', border:'none', borderTop:'1px solid #eee'}}/>
         {success ? (
@@ -93,7 +94,8 @@ export default function Maison() {
 
 const styles = {
   page: { padding:'2rem', maxWidth:'700px', margin:'0 auto' },
-  card: { background:'white', borderRadius:'12px', padding:'2rem', boxShadow:'0 2px 16px rgba(0,0,0,0.09)' },
+  card: { background:'white', borderRadius:'12px', padding:'2rem', boxShadow:'0 2px 16px rgba(0,0,0,0.09)', overflow:'hidden' },
+  image: { width:'calc(100% + 4rem)', margin:'-2rem -2rem 1.5rem -2rem', height:'300px', objectFit:'cover' },
   title: { color:'#333', marginTop:0 },
   ville: { color:'#8B5E2A', fontWeight:'600', marginBottom:'0.5rem' },
   desc: { color:'#555', lineHeight:1.6 },

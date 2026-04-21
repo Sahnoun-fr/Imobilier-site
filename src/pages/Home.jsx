@@ -19,12 +19,13 @@ export default function Home() {
       <div style={styles.grid}>
         {maisons.map(m => (
           <Link to={`/maison/${m.id}`} key={m.id} style={styles.card}>
-            <div style={styles.badge}>{m.nb_chambres} ch.</div>
+            {m.image_url && (
+              <div style={{...styles.image, backgroundImage: `url(${m.image_url})`}} />
+            )}
             <h3 style={styles.cardTitle}>{m.titre}</h3>
             <p style={styles.ville}>{m.ville}</p>
             <p style={styles.adresse}>{m.adresse}</p>
-            <p style={styles.prix}>{m.prix_mois.toLocaleString()} DA / mois</p>
-            {m.superficie_m2 && <p style={styles.sup}>{m.superficie_m2} m²</p>}
+            <p style={styles.prix}>{m.prix?.toLocaleString()} DA / mois</p>
           </Link>
         ))}
         {maisons.length === 0 && <p>Aucune maison disponible pour le moment.</p>}
@@ -37,7 +38,8 @@ const styles = {
   page: { padding:'2rem', maxWidth:'1100px', margin:'0 auto' },
   heading: { color:'#8B5E2A', marginBottom:'1.5rem' },
   grid: { display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))', gap:'1.5rem' },
-  card: { background:'white', borderRadius:'12px', padding:'1.5rem', boxShadow:'0 2px 12px rgba(0,0,0,0.08)', textDecoration:'none', color:'inherit', position:'relative', transition:'box-shadow 0.2s' },
+  card: { background:'white', borderRadius:'12px', padding:'1.5rem', boxShadow:'0 2px 12px rgba(0,0,0,0.08)', textDecoration:'none', color:'inherit', position:'relative', transition:'box-shadow 0.2s', overflow:'hidden' },
+  image: { height:'160px', width:'calc(100% + 3rem)', margin:'-1.5rem -1.5rem 1rem -1.5rem', backgroundSize:'cover', backgroundPosition:'center' },
   badge: { position:'absolute', top:'1rem', right:'1rem', background:'#8B5E2A', color:'white', padding:'0.2rem 0.6rem', borderRadius:'20px', fontSize:'0.8rem' },
   cardTitle: { margin:'0 0 0.5rem', color:'#333', fontSize:'1.1rem' },
   ville: { color:'#8B5E2A', fontWeight:'600', margin:'0 0 0.25rem' },

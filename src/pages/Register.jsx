@@ -16,19 +16,25 @@ export default function Register() {
     e.preventDefault()
     setLoading(true)
     setError('')
-    const { data, error } = await supabase.auth.signUp({
+    const { data: { user }, error } = await supabase.auth.signUp({
       email: form.email,
       password: form.password,
+      options: {
+        data: {
+          nom: form.nom,
+          prenom: form.prenom,
+          telephone: form.telephone
+        }
+      }
     })
-    if (error) { setError(error.message); setLoading(false); return }
+    
+    if (error) { 
+      setError(error.message)
+      setLoading(false)
+      return 
+    }
 
-    await supabase.from('locataires').insert({
-      id: data.user.id,
-      nom: form.nom,
-      prenom: form.prenom,
-      telephone: form.telephone,
-      email: form.email,
-    })
+    // Success! The database trigger will now create the profile automatically.
     setSuccess(true)
     setLoading(false)
   }
