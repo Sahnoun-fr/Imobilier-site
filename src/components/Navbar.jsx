@@ -14,6 +14,7 @@ export default function Navbar({ session }) {
       <Link to="/" style={styles.brand}>Dar-Connect</Link>
       <div style={styles.links}>
         <Link to="/" style={styles.link}>Maisons</Link>
+        <Link to="/about" style={styles.link}>À propos</Link>
         <Link to="/dashboard" style={styles.link}>Mes visites</Link>
         <span style={styles.email}>{session.user.email}</span>
         <button onClick={handleLogout} style={styles.logout}>Déconnexion</button>
