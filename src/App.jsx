@@ -9,6 +9,8 @@ import Dashboard from './pages/Dashboard'
 import About from './pages/About'
 import Navbar from './components/Navbar'
 
+import Category from './pages/Category'
+
 export default function App() {
   const [session, setSession] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -27,14 +29,16 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      {session && <Navbar session={session} />}
+      <Navbar session={session} />
       <Routes>
         <Route path="/login" element={!session ? <Login /> : <Navigate to="/" />} />
         <Route path="/register" element={!session ? <Register /> : <Navigate to="/" />} />
-        <Route path="/" element={session ? <Home /> : <Navigate to="/login" />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/categorie/:type" element={<Category />} />
         <Route path="/about" element={<About />} />
         <Route path="/maison/:id" element={session ? <Maison /> : <Navigate to="/login" />} />
         <Route path="/dashboard" element={session ? <Dashboard /> : <Navigate to="/login" />} />
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
   )

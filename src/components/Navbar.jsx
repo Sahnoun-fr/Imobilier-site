@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
+import './Navbar.css'
 
 export default function Navbar({ session }) {
   const navigate = useNavigate()
@@ -10,24 +11,42 @@ export default function Navbar({ session }) {
   }
 
   return (
-    <nav style={styles.nav}>
-      <Link to="/" style={styles.brand}>Dar-Connect</Link>
-      <div style={styles.links}>
-        <Link to="/" style={styles.link}>Maisons</Link>
-        <Link to="/about" style={styles.link}>À propos</Link>
-        <Link to="/dashboard" style={styles.link}>Mes visites</Link>
-        <span style={styles.email}>{session.user.email}</span>
-        <button onClick={handleLogout} style={styles.logout}>Déconnexion</button>
+    <nav className="navbar">
+      <div className="navbar-container">
+        {/* Logo */}
+        <Link to="/" className="navbar-brand">
+          <span className="brand-dar">Dar</span><span className="brand-connect">Connect</span>
+        </Link>
+
+        {/* Barre de recherche centralisée */}
+        <div className="navbar-search">
+          <input type="text" placeholder="Rechercher une annonce..." />
+          <button className="navbar-search-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </button>
+        </div>
+
+        {/* Liens de navigation */}
+        <div className="navbar-links">
+          <Link to="/" className="nav-link">Accueil</Link>
+          
+          {session ? (
+            <>
+              <Link to="/dashboard" className="nav-link">Mes visites</Link>
+              <span className="nav-email">{session.user.email}</span>
+              <button onClick={handleLogout} className="btn-logout">Déconnexion</button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="nav-link">Se connecter</Link>
+              <Link to="/register" className="btn-register">S'inscrire</Link>
+            </>
+          )}
+        </div>
       </div>
     </nav>
   )
-}
-
-const styles = {
-  nav: { background:'#8B5E2A', padding:'0.75rem 2rem', display:'flex', alignItems:'center', justifyContent:'space-between' },
-  brand: { color:'white', fontWeight:'700', fontSize:'1.3rem', textDecoration:'none' },
-  links: { display:'flex', alignItems:'center', gap:'1.5rem' },
-  link: { color:'rgba(255,255,255,0.85)', textDecoration:'none', fontSize:'0.95rem' },
-  email: { color:'rgba(255,255,255,0.65)', fontSize:'0.85rem' },
-  logout: { background:'rgba(255,255,255,0.15)', color:'white', border:'none', padding:'0.4rem 0.9rem', borderRadius:'6px', cursor:'pointer', fontSize:'0.9rem' }
 }
