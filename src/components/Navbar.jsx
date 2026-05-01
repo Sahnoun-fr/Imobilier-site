@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
+import './Navbar.css' // We will create this or just put classes in index.css
 
 export default function Navbar({ session }) {
   const navigate = useNavigate()
@@ -10,24 +11,26 @@ export default function Navbar({ session }) {
   }
 
   return (
-    <nav style={styles.nav}>
-      <Link to="/" style={styles.brand}>Dar-Connect</Link>
-      <div style={styles.links}>
-        <Link to="/" style={styles.link}>Maisons</Link>
-        <Link to="/about" style={styles.link}>À propos</Link>
-        <Link to="/dashboard" style={styles.link}>Mes visites</Link>
-        <span style={styles.email}>{session.user.email}</span>
-        <button onClick={handleLogout} style={styles.logout}>Déconnexion</button>
+    <nav className="navbar">
+      <Link to="/" className="navbar-brand">
+        <div className="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 9.5L12 4L21 9.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M19 13V20C19 20.5523 18.5523 21 18 21H6C5.44772 21 5 20.5523 5 20V13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M9 21V12H15V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
+        Maison Click
+      </Link>
+      <div className="navbar-links">
+        <Link to="/" className="nav-link">Maisons</Link>
+        <Link to="/about" className="nav-link">À propos</Link>
+        <Link to="/dashboard" className="nav-link">Mes visites</Link>
+        <div className="navbar-user">
+          <span className="user-email">{session.user.email}</span>
+          <button onClick={handleLogout} className="btn-logout">Déconnexion</button>
+        </div>
       </div>
     </nav>
   )
-}
-
-const styles = {
-  nav: { background:'#8B5E2A', padding:'0.75rem 2rem', display:'flex', alignItems:'center', justifyContent:'space-between' },
-  brand: { color:'white', fontWeight:'700', fontSize:'1.3rem', textDecoration:'none' },
-  links: { display:'flex', alignItems:'center', gap:'1.5rem' },
-  link: { color:'rgba(255,255,255,0.85)', textDecoration:'none', fontSize:'0.95rem' },
-  email: { color:'rgba(255,255,255,0.65)', fontSize:'0.85rem' },
-  logout: { background:'rgba(255,255,255,0.15)', color:'white', border:'none', padding:'0.4rem 0.9rem', borderRadius:'6px', cursor:'pointer', fontSize:'0.9rem' }
 }

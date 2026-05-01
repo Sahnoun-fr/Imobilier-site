@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { supabase } from '../supabaseClient'
 import { Link } from 'react-router-dom'
+import './Auth.css'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -18,34 +19,41 @@ export default function Login() {
   }
 
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <h1 style={styles.title}>Dar-Connect</h1>
-        <p style={styles.subtitle}>Connexion</p>
-        <form onSubmit={handleLogin} style={styles.form}>
-          <input style={styles.input} type="email" placeholder="Email"
-            value={email} onChange={e => setEmail(e.target.value)} required />
-          <input style={styles.input} type="password" placeholder="Mot de passe"
-            value={password} onChange={e => setPassword(e.target.value)} required />
-          {error && <p style={styles.error}>{error}</p>}
-          <button style={styles.btn} type="submit" disabled={loading}>
-            {loading ? 'Connexion...' : 'Se connecter'}
+    <div className="auth-page animate-fade-in">
+      <div className="auth-card">
+        <div className="auth-logo">
+          <div className="auth-logo-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 9.5L12 4L21 9.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M19 13V20C19 20.5523 18.5523 21 18 21H6C5.44772 21 5 20.5523 5 20V13" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+        </div>
+        
+        <h1 className="auth-title">Maison Click</h1>
+        <p className="auth-subtitle">Content de vous revoir ! Connectez-vous.</p>
+        
+        <form onSubmit={handleLogin} className="auth-form">
+          <div className="form-group" style={{marginBottom: 0}}>
+            <input className="form-input" type="email" placeholder="Adresse email"
+              value={email} onChange={e => setEmail(e.target.value)} required />
+          </div>
+          <div className="form-group" style={{marginBottom: 0}}>
+            <input className="form-input" type="password" placeholder="Mot de passe"
+              value={password} onChange={e => setPassword(e.target.value)} required />
+          </div>
+          
+          {error && <div className="auth-error">{error}</div>}
+          
+          <button className="btn btn-primary auth-btn" type="submit" disabled={loading}>
+            {loading ? 'Connexion en cours...' : 'Se connecter'}
           </button>
         </form>
-        <p style={styles.link}>Pas de compte ? <Link to="/register">S'inscrire</Link></p>
+        
+        <p className="auth-link">
+          Pas encore de compte ? <Link to="/register">Créer un compte</Link>
+        </p>
       </div>
     </div>
   )
-}
-
-const styles = {
-  container: { minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:'#f5f0eb' },
-  card: { background:'white', padding:'2.5rem', borderRadius:'12px', width:'100%', maxWidth:'400px', boxShadow:'0 4px 24px rgba(0,0,0,0.10)' },
-  title: { margin:0, color:'#8B5E2A', fontSize:'2rem', fontWeight:'700' },
-  subtitle: { color:'#888', marginBottom:'1.5rem' },
-  form: { display:'flex', flexDirection:'column', gap:'1rem' },
-  input: { padding:'0.75rem 1rem', borderRadius:'8px', border:'1px solid #ddd', fontSize:'1rem' },
-  btn: { padding:'0.75rem', background:'#8B5E2A', color:'white', border:'none', borderRadius:'8px', fontSize:'1rem', cursor:'pointer' },
-  error: { color:'#c0392b', fontSize:'0.9rem', margin:0 },
-  link: { textAlign:'center', marginTop:'1rem', color:'#888' }
 }
