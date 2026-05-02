@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
+import './Maison.css'
 
 export default function Maison() {
   const { id } = useParams()
@@ -47,66 +48,102 @@ export default function Maison() {
     setLoading(false)
   }
 
-  if (!maison) return <div style={styles.loading}>Chargement...</div>
+  if (!maison) return (
+    <div className="page-container" style={{display:'flex', justifyContent:'center', alignItems:'center'}}>
+      <div className="loading-spinner">Chargement...</div>
+    </div>
+  )
 
   return (
-    <div style={styles.page}>
-      <div style={styles.card}>
-        {maison.image_url && (
-          <img src={maison.image_url} alt={maison.titre} style={styles.image} />
-        )}
-        <h2 style={styles.title}>{maison.titre}</h2>
-        <p style={styles.ville}>{maison.ville} — {maison.adresse}</p>
-        <p style={styles.desc}>{maison.description}</p>
-        <div style={styles.infos}>
-          <span style={styles.prix}>{maison.prix?.toLocaleString()} DA/mois</span>
-        </div>
-        <hr style={{margin:'1.5rem 0', border:'none', borderTop:'1px solid #eee'}}/>
-        {success ? (
-          <div style={styles.success}>
-            Visite demandée avec succès ! Vous pouvez suivre votre demande dans votre tableau de bord.
+    <div className="page-container animate-fade-in">
+      <div className="maison-layout">
+        <div className="maison-details">
+          {maison.image_url ? (
+            <img src={maison.image_url} alt={maison.titre} className="maison-hero-img" />
+          ) : (
+            <div className="maison-hero-img placeholder-bg" />
+          )}
+          
+          <div className="maison-info-card card">
+            <div className="maison-header">
+              <h1 className="maison-title">{maison.titre}</h1>
+              <div className="maison-price">
+                {maison.prix?.toLocaleString()} DA <span>/ mois</span>
+              </div>
+            </div>
+            
+            <div className="property-location maison-location">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              {maison.ville} &mdash; {maison.adresse}
+            </div>
+            
+            <div className="maison-description-section">
+              <h3>À propos de ce bien</h3>
+              <p className="maison-desc">{maison.description}</p>
+            </div>
           </div>
-        ) : (
-          <>
-            <h3 style={styles.formTitle}>Demander une visite</h3>
-            <form onSubmit={handleReserver} style={styles.form}>
-              <label style={styles.label}>Date souhaitée</label>
-              <input style={styles.input} type="datetime-local"
-                value={date} onChange={e => setDate(e.target.value)} required />
-              <label style={styles.label}>Message (optionnel)</label>
-              <textarea style={{...styles.input, resize:'vertical', minHeight:'80px'}}
-                placeholder="Votre message..." value={message}
-                onChange={e => setMessage(e.target.value)} />
-              <label style={styles.label}>Scan de votre CIN (obligatoire)</label>
-              <input style={styles.input} type="file" accept="image/*,.pdf"
-                onChange={e => setFile(e.target.files[0])} required />
-              {error && <p style={styles.error}>{error}</p>}
-              <button style={styles.btn} type="submit" disabled={loading}>
-                {loading ? 'Envoi en cours...' : 'Confirmer la demande'}
-              </button>
-            </form>
-          </>
-        )}
+        </div>
+
+        <div className="maison-sidebar">
+          <div className="card booking-card sticky-sidebar">
+            {success ? (
+              <div className="booking-success">
+                <div className="success-icon">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                  </svg>
+                </div>
+                <h3>Visite demandée avec succès !</h3>
+                <p>Vous pouvez suivre votre demande dans votre tableau de bord.</p>
+              </div>
+            ) : (
+              <>
+                <h3 className="booking-title">Demander une visite</h3>
+                <form onSubmit={handleReserver} className="booking-form">
+                  <div className="form-group">
+                    <label className="form-label">Date souhaitée</label>
+                    <input className="form-input" type="datetime-local"
+                      value={date} onChange={e => setDate(e.target.value)} required />
+                  </div>
+                  
+                  <div className="form-group">
+                    <label className="form-label">Message (optionnel)</label>
+                    <textarea className="form-input" style={{resize:'vertical', minHeight:'100px'}}
+                      placeholder="Votre message pour le propriétaire..." value={message}
+                      onChange={e => setMessage(e.target.value)} />
+                  </div>
+                  
+                  <div className="form-group">
+                    <label className="form-label">Scan de votre CIN (obligatoire)</label>
+                    <div className="file-upload-wrapper">
+                      <input type="file" accept="image/*,.pdf" className="file-input"
+                        onChange={e => setFile(e.target.files[0])} required id="file-upload" />
+                      <label htmlFor="file-upload" className="file-upload-label">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                          <polyline points="17 8 12 3 7 8"></polyline>
+                          <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        {file ? file.name : "Choisir un fichier"}
+                      </label>
+                    </div>
+                  </div>
+                  
+                  {error && <div className="error-message">{error}</div>}
+                  
+                  <button className="btn btn-primary btn-block" type="submit" disabled={loading}>
+                    {loading ? 'Envoi en cours...' : 'Confirmer la demande'}
+                  </button>
+                </form>
+              </>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   )
-}
-
-const styles = {
-  page: { padding:'2rem', maxWidth:'700px', margin:'0 auto' },
-  card: { background:'white', borderRadius:'12px', padding:'2rem', boxShadow:'0 2px 16px rgba(0,0,0,0.09)', overflow:'hidden' },
-  image: { width:'calc(100% + 4rem)', margin:'-2rem -2rem 1.5rem -2rem', height:'300px', objectFit:'cover' },
-  title: { color:'#333', marginTop:0 },
-  ville: { color:'#8B5E2A', fontWeight:'600', marginBottom:'0.5rem' },
-  desc: { color:'#555', lineHeight:1.6 },
-  infos: { display:'flex', gap:'1.5rem', flexWrap:'wrap', marginTop:'1rem' },
-  prix: { color:'#27ae60', fontWeight:'700' },
-  formTitle: { color:'#8B5E2A', marginBottom:'1rem' },
-  form: { display:'flex', flexDirection:'column', gap:'0.75rem' },
-  label: { fontWeight:'600', color:'#555', fontSize:'0.9rem' },
-  input: { padding:'0.75rem', borderRadius:'8px', border:'1px solid #ddd', fontSize:'1rem', fontFamily:'inherit' },
-  btn: { padding:'0.85rem', background:'#8B5E2A', color:'white', border:'none', borderRadius:'8px', fontSize:'1rem', cursor:'pointer', marginTop:'0.5rem' },
-  error: { color:'#c0392b', fontSize:'0.9rem' },
-  success: { background:'#eafaf1', color:'#1e8449', padding:'1.25rem', borderRadius:'8px', fontWeight:'600' },
-  loading: { padding:'3rem', textAlign:'center' }
 }
