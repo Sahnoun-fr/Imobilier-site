@@ -21,12 +21,11 @@ export default function Category() {
 
   useEffect(() => {
     setLoading(true)
-    // On suppose que la colonne s'appelle 'type' dans Supabase
-    // Si la colonne n'existe pas encore, cette requête ne renverra rien ou une erreur (qu'on gère silencieusement ici)
-    supabase.from('maisons').select('*').eq('disponible', true).eq('type', type)
+    // On cherche le type (ex: villa) à l'intérieur du titre puisque la colonne 'type' n'existe pas
+    supabase.from('maisons').select('*').eq('disponible', true).ilike('titre', `%${type}%`)
       .then(({ data, error }) => { 
         if (error) {
-          console.error("Erreur Supabase (peut-être que la colonne 'type' n'existe pas encore) :", error)
+          console.error("Erreur lors de la récupération des catégories :", error)
         }
         setMaisons(data || [])
         setLoading(false) 

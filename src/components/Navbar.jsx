@@ -1,4 +1,5 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import './Navbar.css'
 
@@ -17,8 +18,6 @@ export default function Navbar({ session }) {
         <Link to="/" className="navbar-brand">
           <span className="brand-dar">Dar</span><span className="brand-connect">Connect</span>
         </Link>
-
-
 
         {/* Liens de navigation */}
         <div className="navbar-links">

@@ -1,17 +1,46 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../supabaseClient'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import './Home.css'
 
 export default function Home() {
   const [maisons, setMaisons] = useState([])
   const [loading, setLoading] = useState(true)
+  const [filters, setFilters] = useState({ transaction: '', ville: '', budget: '' })
+  
+  const location = useLocation()
+  const queryParams = new URLSearchParams(location.search)
+  const navbarQuery = queryParams.get('q')
 
   useEffect(() => {
-    // Fetch only available houses, limit to 6 for the homepage to keep it clean
-    supabase.from('maisons').select('*').eq('disponible', true).limit(6)
-      .then(({ data }) => { setMaisons(data || []); setLoading(false) })
-  }, [])
+    fetchMaisons()
+  }, [navbarQuery]) // Refaire la recherche quand le mot-clé change
+
+  async function fetchMaisons() {
+    setLoading(true)
+    let query = supabase.from('maisons').select('*').eq('disponible', true)
+    
+    // Si une recherche vient de la navbar
+    if (navbarQuery) {
+      query = query.or(`titre.ilike.%${navbarQuery}%,ville.ilike.%${navbarQuery}%`)
+    } else {
+      // Sinon on applique les filtres de la page d'accueil
+      if (filters.transaction) query = query.eq('type_transaction', filters.transaction)
+      if (filters.ville) query = query.ilike('ville', `%${filters.ville}%`)
+      if (filters.budget) {
+        const budgetVal = parseInt(filters.budget)
+        if (!isNaN(budgetVal)) query = query.lte('prix', budgetVal)
+      }
+    }
+
+    const { data } = await query.order('created_at', { ascending: false }).limit(6)
+    setMaisons(data || [])
+    setLoading(false)
+  }
+
+  function handleSearch() {
+    fetchMaisons()
+  }
 
   return (
     <div className="home-container">
@@ -26,8 +55,8 @@ export default function Home() {
           <div className="hero-search advanced-search">
             <div className="search-field">
               <label>Transaction</label>
-              <select defaultValue="">
-                <option value="" disabled>Tout type</option>
+              <select value={filters.transaction} onChange={e => setFilters({...filters, transaction: e.target.value})}>
+                <option value="">Tout type</option>
                 <option value="location">Location</option>
                 <option value="vente">Vente</option>
               </select>
@@ -35,20 +64,26 @@ export default function Home() {
             <div className="search-divider"></div>
             <div className="search-field">
               <label>Localisation</label>
-              <input type="text" placeholder="Ville, quartier..." />
+              <input 
+                type="text" 
+                placeholder="Ville, quartier..." 
+                value={filters.ville} 
+                onChange={e => setFilters({...filters, ville: e.target.value})}
+                onKeyDown={e => e.key === 'Enter' && handleSearch()}
+              />
             </div>
             <div className="search-divider"></div>
             <div className="search-field">
               <label>Budget Max</label>
-              <select defaultValue="">
-                <option value="" disabled>Pas de limite</option>
+              <select value={filters.budget} onChange={e => setFilters({...filters, budget: e.target.value})}>
+                <option value="">Pas de limite</option>
                 <option value="50000">50 000 DA</option>
                 <option value="100000">100 000 DA</option>
                 <option value="500000">500 000 DA</option>
-                <option value="1000000+">+ 1 000 000 DA</option>
+                <option value="1000000">1 000 000 DA</option>
               </select>
             </div>
-            <button className="search-btn">Rechercher</button>
+            <button className="search-btn" onClick={handleSearch}>Rechercher</button>
           </div>
         </div>
       </section>
