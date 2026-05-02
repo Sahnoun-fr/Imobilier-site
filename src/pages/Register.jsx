@@ -43,7 +43,7 @@ export default function Register() {
     <div className="auth-page animate-fade-in">
       <div className="auth-card">
         <div className="auth-logo">
-          <div className="auth-logo-icon" style={{background: 'var(--color-success-bg)', color: 'var(--color-success)'}}>
+          <div className="auth-logo-icon" style={{background: 'rgba(16, 185, 129, 0.1)', color: 'var(--success)'}}>
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="20 6 9 17 4 12"></polyline>
             </svg>
@@ -70,7 +70,7 @@ export default function Register() {
           </div>
         </div>
         
-        <h1 className="auth-title">Maison Click</h1>
+        <h1 className="auth-title">Dar Connect</h1>
         <p className="auth-subtitle">Créez votre compte pour commencer</p>
         
         <form onSubmit={handleRegister} className="auth-form">
