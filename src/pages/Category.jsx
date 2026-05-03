@@ -15,15 +15,22 @@ export default function Category() {
     if (!capitalized.endsWith('s') && t !== 'local-pro') {
       capitalized += 's'
     }
+    if (t === 'tous' || t === 'tout') return "Toutes les offres"
     if (t === 'local-pro') return "Locaux Professionnels"
+
     return capitalized
   }
 
   useEffect(() => {
     setLoading(true)
-    // On cherche le type (ex: villa) à l'intérieur du titre puisque la colonne 'type' n'existe pas
-    supabase.from('maisons').select('*').eq('disponible', true).ilike('titre', `%${type}%`)
-      .then(({ data, error }) => { 
+    let query = supabase.from('maisons').select('*').eq('disponible', true)
+    
+    // Si on demande "tous", on ne filtre pas par type dans le titre
+    if (type !== 'tous' && type !== 'tout') {
+      query = query.ilike('titre', `%${type}%`)
+    }
+
+    query.then(({ data, error }) => { 
         if (error) {
           console.error("Erreur lors de la récupération des catégories :", error)
         }
@@ -36,8 +43,13 @@ export default function Category() {
     <div className="category-page">
       <div className="category-header">
         <h1>{formatTitle(type)}</h1>
-        <p>Découvrez notre sélection exclusive de {type?.replace('-', ' ')}s.</p>
+        <p>
+          {type === 'tous' || type === 'tout' 
+            ? "Explorez l'intégralité de notre catalogue immobilier."
+            : `Découvrez notre sélection exclusive de ${type?.replace('-', ' ')}s.`}
+        </p>
       </div>
+
 
       <div className="category-content">
         {loading ? (

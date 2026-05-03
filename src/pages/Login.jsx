@@ -45,7 +45,8 @@ export default function Login() {
           </div>
         </div>
         
-        <h1 className="auth-title">Dar Connect</h1>
+        <h1 className="auth-title">MaisonCllique</h1>
+
         <p className="auth-subtitle">Content de vous revoir ! Connectez-vous.</p>
         
         <form onSubmit={handleLogin} className="auth-form">

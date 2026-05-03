@@ -7,9 +7,11 @@ import Home from './pages/Home'
 import Maison from './pages/Maison'
 import Dashboard from './pages/Dashboard'
 import About from './pages/About'
+import AddProperty from './pages/AddProperty'
 import Navbar from './components/Navbar'
 
 import Category from './pages/Category'
+
 
 export default function App() {
   const [session, setSession] = useState(null)
@@ -38,7 +40,9 @@ export default function App() {
         <Route path="/about" element={<About />} />
         <Route path="/maison/:id" element={session ? <Maison /> : <Navigate to="/login" />} />
         <Route path="/dashboard" element={session ? <Dashboard /> : <Navigate to="/login" />} />
+        <Route path="/publier" element={session ? <AddProperty /> : <Navigate to="/login" />} />
         <Route path="*" element={<Navigate to="/" />} />
+
       </Routes>
     </BrowserRouter>
   )

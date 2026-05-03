@@ -85,7 +85,8 @@ export default function Register() {
           </div>
         </div>
         
-        <h1 className="auth-title">Dar Connect</h1>
+        <h1 className="auth-title">MaisonCllique</h1>
+
         <p className="auth-subtitle">Créez votre compte pour commencer</p>
         
         <form onSubmit={handleRegister} className="auth-form">
