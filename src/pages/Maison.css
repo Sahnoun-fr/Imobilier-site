@@ -328,6 +328,30 @@
   transform: none;
 }
 
+.btn-delete-full {
+  width: 100%;
+  padding: 1.25rem;
+  border-radius: 50px;
+  border: 2px solid #ef4444;
+  background: transparent;
+  color: #ef4444;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-delete-full:hover {
+  background: #ef4444;
+  color: white;
+  box-shadow: 0 10px 15px rgba(239, 68, 68, 0.2);
+}
+
+.btn-delete-full:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .error-alert {
   padding: 1rem;
   background: #FEF2F2;

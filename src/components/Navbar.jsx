@@ -8,23 +8,31 @@ export default function Navbar({ session }) {
   const location = useLocation()
   const [hasNewNotif, setHasNewNotif] = useState(false)
 
+  async function checkNotifications() {
+    if (!session?.user) return
+
+    // On cherche les visites en attente pour les biens dont l'utilisateur est propriétaire
+    // C'est le signal "nouveau" pour le propriétaire
+    const { count, error } = await supabase
+      .from('visites')
+      .select('*, maisons!inner(proprietaire_id)', { count: 'exact', head: true })
+      .eq('maisons.proprietaire_id', session.user.id)
+      .eq('statut', 'en_attente')
+
+    if (error) {
+      console.error("Erreur notifications:", error)
+      return
+    }
+
+    setHasNewNotif(count > 0)
+  }
+
   useEffect(() => {
     if (!session) return
 
-    // Vérifier les nouvelles notifications (visites en attente ou confirmées)
-    async function checkNotifications() {
-      const { count } = await supabase
-        .from('visites')
-        .select('*', { count: 'exact', head: true })
-        .or(`locataire_id.eq.${session.user.id},maisons(proprietaire_id).eq.${session.user.id}`)
-        .eq('statut', 'en_attente') // Exemple simple : toute visite en attente est une notification
-
-      setHasNewNotif(count > 0)
-    }
-
     checkNotifications()
 
-    // Optionnel: S'abonner aux changements en temps réel
+    // S'abonner aux changements en temps réel pour mettre à jour la cloche immédiatement
     const channel = supabase
       .channel('schema-db-changes')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'visites' }, () => {

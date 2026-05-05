@@ -199,6 +199,47 @@
   background: #fffbeb;
 }
 
+.btn-delete {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 1.2rem;
+  background: #fee2e2;
+  border: 1.5px solid #fecaca;
+  border-radius: 0.8rem;
+  color: #ef4444;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-delete:hover {
+  background: #fef2f2;
+  border-color: #ef4444;
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+}
+
+.btn-delete-icon {
+  background: none;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.btn-delete-icon:hover {
+  background: #fee2e2;
+  border-color: #fecaca;
+  transform: scale(1.1);
+}
+
 /* Empty State */
 .empty-container {
   display: flex;

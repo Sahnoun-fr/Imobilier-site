@@ -15,27 +15,38 @@ export default function Dashboard() {
     if (!user) return
 
     // 1. Demandes envoyées par l'utilisateur
-    const { data: sent } = await supabase.from('visites')
-      .select('*, maisons(titre, ville, adresse, prix, type_transaction)')
+    const { data: sent, error: errorSent } = await supabase.from('visites')
+      .select('*, maisons!inner(id, titre, ville, adresse, prix, surface, chambres, sdb, type_bien, type_transaction)')
       .eq('locataire_id', user.id)
       .order('created_at', { ascending: false })
     
-    setVisites(sent || [])
+    if (errorSent) {
+      console.error("Erreur lors du chargement des demandes envoyées:", errorSent)
+      // Si l'erreur est liée au join, on essaie sans le join pour au moins avoir les données brutes
+      const { data: fallbackSent } = await supabase.from('visites')
+        .select('*')
+        .eq('locataire_id', user.id)
+      setVisites(fallbackSent || [])
+    } else {
+      setVisites(sent || [])
+    }
 
     // 2. Demandes reçues pour ses propres biens
-    const { data: received } = await supabase.from('visites')
+    const { data: received, error: errorReceived } = await supabase.from('visites')
       .select('*, maisons!inner(titre, ville, adresse, prix, proprietaire_id)')
       .eq('maisons.proprietaire_id', user.id)
       .order('created_at', { ascending: false })
 
+    if (errorReceived) console.error("Erreur lors du chargement des demandes reçues:", errorReceived)
     setReceivedVisites(received || [])
 
     // 3. Mes annonces publiées
-    const { data: annonces } = await supabase.from('maisons')
+    const { data: annonces, error: errorAnnonces } = await supabase.from('maisons')
       .select('*')
       .eq('proprietaire_id', user.id)
       .order('created_at', { ascending: false })
     
+    if (errorAnnonces) console.error("Erreur lors du chargement de mes annonces:", errorAnnonces)
     setMesAnnonces(annonces || [])
     setLoading(false)
   }
@@ -52,6 +63,36 @@ export default function Dashboard() {
     
     if (error) alert(error.message)
     else loadData() // Recharger les données
+  }
+
+  async function deleteAnnonce(id) {
+    if (!window.confirm("Êtes-vous sûr de vouloir supprimer cette annonce ?")) return
+
+    const { error } = await supabase
+      .from('maisons')
+      .delete()
+      .eq('id', id)
+    
+    if (error) {
+      alert("Erreur lors de la suppression : " + error.message)
+    } else {
+      setMesAnnonces(prev => prev.filter(m => m.id !== id))
+    }
+  }
+
+  async function deleteVisite(id) {
+    if (!window.confirm("Êtes-vous sûr de vouloir supprimer cette demande ?")) return
+
+    const { error } = await supabase
+      .from('visites')
+      .delete()
+      .eq('id', id)
+    
+    if (error) {
+      alert("Erreur lors de la suppression : " + error.message)
+    } else {
+      setVisites(prev => prev.filter(v => v.id !== id))
+    }
   }
 
   function getStatusBadge(status) {
@@ -117,13 +158,54 @@ export default function Dashboard() {
                       <h3>{v.maisons?.titre}</h3>
                       <div className="visite-location">{v.maisons?.ville}</div>
                     </div>
-                    {getStatusBadge(v.statut)}
+                    <div style={{display:'flex', alignItems:'center', gap:'1rem'}}>
+                      {getStatusBadge(v.statut)}
+                      <button 
+                        onClick={() => deleteVisite(v.id)}
+                        className="btn-delete-icon"
+                        title="Supprimer la demande"
+                      >
+                        🗑️
+                      </button>
+                    </div>
                   </div>
-                  <div className="visite-details-grid">
+                  <div className="visite-details-grid" style={{gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))'}}>
                     <div className="detail-item">
                       <span className="detail-label">Date prévue</span>
                       <span className="detail-value">{new Date(v.date_visite).toLocaleString()}</span>
                     </div>
+                    {v.maisons ? (
+                      <>
+                        <div className="detail-item">
+                          <span className="detail-label">Prix</span>
+                          <span className="detail-value">{v.maisons.prix?.toLocaleString() || '--'} DA</span>
+                        </div>
+                        <div className="detail-item">
+                          <span className="detail-label">Surface</span>
+                          <span className="detail-value">{v.maisons.surface || '--'} m²</span>
+                        </div>
+                        <div className="detail-item">
+                          <span className="detail-label">Type</span>
+                          <span className="detail-value" style={{textTransform:'capitalize'}}>{v.maisons.type_bien || 'Bien'}</span>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="detail-item">
+                        <span className="detail-label">Statut</span>
+                        <span className="detail-value" style={{fontSize:'0.9rem', color:'var(--primary)'}}>En attente</span>
+                      </div>
+                    )}
+                  </div>
+                  {v.message && (
+                    <div className="visite-message-box" style={{marginTop:'1rem', marginBottom:'1.5rem', background:'#f8fafc', border:'1px solid #e2e8f0'}}>
+                      <div className="message-header">VOTRE MESSAGE</div>
+                      <p className="message-text">"{v.message}"</p>
+                    </div>
+                  )}
+                  <div className="visite-footer">
+                    <Link to={`/maison/${v.maison_id}`} className="btn-doc" style={{width:'100%', justifyContent:'center'}}>
+                      Voir les détails du bien
+                    </Link>
                   </div>
                 </div>
               ))}
@@ -209,7 +291,7 @@ export default function Dashboard() {
                       {m.type_transaction === 'location' ? 'À Louer' : 'À Vendre'}
                     </span>
                   </div>
-                  <div className="visite-details-grid">
+                  <div className="visite-details-grid" style={{gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))'}}>
                     <div className="detail-item">
                       <span className="detail-label">Prix</span>
                       <span className="detail-value">{m.prix?.toLocaleString()} DA</span>
@@ -218,10 +300,27 @@ export default function Dashboard() {
                       <span className="detail-label">Surface</span>
                       <span className="detail-value">{m.surface} m²</span>
                     </div>
+                    <div className="detail-item">
+                      <span className="detail-label">Type</span>
+                      <span className="detail-value" style={{textTransform:'capitalize'}}>{m.type_bien || 'Bien'}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="detail-label">Chambres</span>
+                      <span className="detail-value">{m.chambres || 0}</span>
+                    </div>
                   </div>
-                  <div className="visite-footer">
+                  <div className="visite-footer" style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
                     <span className="creation-date">Publié le {new Date(m.created_at).toLocaleDateString()}</span>
-                    <Link to={`/maison/${m.id}`} className="btn-doc">Voir l'annonce</Link>
+                    <div style={{display:'flex', gap:'0.8rem'}}>
+                      <Link to={`/maison/${m.id}`} className="btn-doc">Voir l'annonce</Link>
+                      <button 
+                        onClick={() => deleteAnnonce(m.id)}
+                        className="btn-delete"
+                        title="Supprimer cette annonce"
+                      >
+                        Supprimer
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
