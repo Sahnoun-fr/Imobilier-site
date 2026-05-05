@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import './Navbar.css'
@@ -6,6 +6,36 @@ import './Navbar.css'
 export default function Navbar({ session }) {
   const navigate = useNavigate()
   const location = useLocation()
+  const [hasNewNotif, setHasNewNotif] = useState(false)
+
+  useEffect(() => {
+    if (!session) return
+
+    // Vérifier les nouvelles notifications (visites en attente ou confirmées)
+    async function checkNotifications() {
+      const { count } = await supabase
+        .from('visites')
+        .select('*', { count: 'exact', head: true })
+        .or(`locataire_id.eq.${session.user.id},maisons(proprietaire_id).eq.${session.user.id}`)
+        .eq('statut', 'en_attente') // Exemple simple : toute visite en attente est une notification
+
+      setHasNewNotif(count > 0)
+    }
+
+    checkNotifications()
+
+    // Optionnel: S'abonner aux changements en temps réel
+    const channel = supabase
+      .channel('schema-db-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'visites' }, () => {
+        checkNotifications()
+      })
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [session])
 
   async function handleLogout() {
     await supabase.auth.signOut()
@@ -33,9 +63,17 @@ export default function Navbar({ session }) {
             <>
               <Link to="/publier" className={`nav-link ${isActive('/publier')}`}>Publier une annonce</Link>
               <Link to="/dashboard" className={`nav-link ${isActive('/dashboard')}`}>Mes visites</Link>
+              
               <span className="nav-email">{session.user.email}</span>
-
               <button onClick={handleLogout} className="btn-logout">Déconnexion</button>
+
+              <div className="notification-bell" onClick={() => { setHasNewNotif(false); navigate('/dashboard'); }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+                {hasNewNotif && <span className="notification-badge"></span>}
+              </div>
             </>
           ) : (
             <>

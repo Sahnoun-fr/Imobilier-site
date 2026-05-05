@@ -1,103 +1,250 @@
+/* Dashboard.css - Refonte Premium */
+
+.dashboard-container {
+  padding-top: 120px; /* Évite l'overlap avec la navbar */
+  min-height: 100vh;
+  background-color: #f8fafc;
+}
+
+.dashboard-content {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 2rem 4rem;
+}
+
 .dashboard-header {
-  margin-bottom: 3rem;
-  border-bottom: 1px solid var(--color-border);
-  padding-bottom: 1.5rem;
+  margin-bottom: 2.5rem;
+  text-align: left;
 }
 
 .dashboard-title {
-  font-size: 2.25rem;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #0f172a;
   margin-bottom: 0.5rem;
-  letter-spacing: -0.5px;
+  letter-spacing: -1px;
 }
 
 .dashboard-subtitle {
-  color: var(--color-text-muted);
+  color: #64748b;
   font-size: 1.1rem;
 }
 
-.visites-list {
+/* Tabs Styling */
+.dashboard-tabs {
   display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  max-width: 800px;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 2px;
 }
 
+.tab-btn {
+  background: none;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+  color: var(--primary);
+}
+
+.tab-btn.active {
+  color: var(--primary);
+}
+
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: var(--primary);
+  border-radius: 10px;
+}
+
+/* Visite Card Refined */
 .visite-card {
-  padding: 1.5rem;
-  border-left: 4px solid var(--color-primary);
+  background: white;
+  border-radius: 1.2rem;
+  padding: 1.8rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f1f5f9;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.visite-card-top {
+.visite-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.visite-card-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 1rem;
-  gap: 1rem;
+  margin-bottom: 1.2rem;
 }
 
-.visite-info {
-  flex: 1;
-}
-
-.visite-maison {
-  font-size: 1.25rem;
-  margin-bottom: 0.4rem;
+.visite-main-info h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
 }
 
 .visite-location {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  color: var(--color-secondary);
-  font-size: 0.9rem;
-  font-weight: 500;
+  gap: 0.5rem;
+  color: #64748b;
+  font-size: 0.95rem;
 }
 
-.visite-meta {
+.status-badge {
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-en_attente { background: #fef3c7; color: #92400e; }
+.status-confirmé { background: #dcfce7; color: #166534; }
+.status-annulé { background: #fee2e2; color: #991b1b; }
+
+.visite-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  background: #f8fafc;
+  padding: 1.2rem;
+  border-radius: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.detail-item {
   display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.detail-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+}
+
+.detail-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.visite-message-box {
+  background: #fff;
+  border: 1px solid #e2e8f0;
   padding: 1rem;
-  background: var(--color-bg);
-  border-radius: var(--radius-md);
+  border-radius: 0.8rem;
   margin-bottom: 1rem;
 }
 
-.meta-item {
+.message-header {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+}
+
+.message-text {
+  font-style: italic;
+  color: #475569;
+  line-height: 1.5;
+}
+
+.visite-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.btn-doc {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 1.2rem;
+  background: white;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 0.8rem;
+  color: #475569;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.btn-doc:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: #fffbeb;
+}
+
+/* Empty State */
+.empty-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem 2rem;
+  background: white;
+  border-radius: 2rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  text-align: center;
+}
+
+.empty-icon-circle {
+  width: 100px;
+  height: 100px;
+  background: #f1f5f9;
+  border-radius: 50%;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  color: var(--color-text-muted);
-  font-size: 0.95rem;
-  font-weight: 500;
+  justify-content: center;
+  margin-bottom: 2rem;
+  color: #94a3b8;
 }
 
-.price-item {
-  color: var(--color-text);
+.empty-title {
+  font-size: 1.5rem;
   font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.8rem;
 }
 
-.visite-message {
-  padding-top: 1rem;
-  border-top: 1px dashed var(--color-border);
-  margin-bottom: 1rem;
+.empty-text {
+  color: #64748b;
+  max-width: 300px;
+  line-height: 1.6;
 }
 
-.message-label {
-  display: block;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--color-text-muted);
-  margin-bottom: 0.25rem;
-}
-
-.visite-message p {
-  color: var(--color-text);
-  font-style: italic;
-  margin: 0;
-}
-
-.visite-actions {
-  display: flex;
-  justify-content: flex-end;
+@media (max-width: 640px) {
+  .visite-card-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .visite-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
 }

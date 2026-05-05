@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import './Maison.css'
 
 export default function Maison() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const [maison, setMaison] = useState(null)
   const [date, setDate] = useState('')
   const [message, setMessage] = useState('')
@@ -43,8 +44,15 @@ export default function Maison() {
       statut: 'en_attente'
     })
 
-    if (insertError) setError(insertError.message)
-    else setSuccess(true)
+    if (insertError) {
+      setError(insertError.message)
+    } else {
+      setSuccess(true)
+      // Redirection automatique vers l'accueil après 3 secondes
+      setTimeout(() => {
+        navigate('/')
+      }, 3000)
+    }
     setLoading(false)
   }
 
