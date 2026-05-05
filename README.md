@@ -3,13 +3,16 @@
 Bienvenue sur le dépôt de **Maison Click**, une plateforme immobilière moderne et intuitive. 
 Cette application permet aux utilisateurs de parcourir, rechercher et publier des annonces immobilières (maisons, appartements, terrains, etc.).
 
-## 📸 Captures d'écran
+## 📸 INTERFACE:
 
-*(Ajoutez vos images ici dans le dossier `screenshots` et décommentez le code ci-dessous)*
-<!-- 
+### Page d'Accueil
 ![Page d'accueil](screenshots/home.png)
-![Tableau de bord](screenshots/dashboard.png)
--->
+
+### Seller Interface
+![Seller Interface](screenshots/seller.png)
+
+### Buyer Interface
+![Buyer Interface](screenshots/buyer%20inter.png)
 
 ## 🎯 Problem Statement
 
@@ -119,6 +122,8 @@ maison click/
 ```
 
 ## 🗄️ Schéma de la Base de Données
+
+![Schéma Supabase](screenshots/supabase-schema-memuvhalgrfrcflmzubd.png)
 
 Voici la structure des tables PostgreSQL de notre backend Supabase :
 
